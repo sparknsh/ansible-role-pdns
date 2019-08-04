@@ -1,0 +1,39 @@
+---
+
+- name: PDNS | Install apt-transport-https
+  apt:
+    name: "apt-transport-https"
+    state: present
+  when:
+    - pdns__repo_https | bool
+
+- name: PDNS | Install gnupg
+  package:
+    name: gnupg
+    state: present
+
+- name: PDNS | Add APT Key
+  apt_key:
+    url: "{{ pdns__install_repo['gpg_key'] }}"
+    state: present
+  notify: APT Update Cache
+  register: __pdns__apt_key
+
+- name: PDNS | Add APT Repo
+  apt_repository:
+    filename: "pdns"
+    repo: "{{ pdns__install_repo['apt_repo'] }}"
+    state: present
+  notify: APT Update Cache
+  register: __pdns__apt_repo
+
+- name: PDNS | Run Handlers
+  meta: flush_handlers
+
+- name: PDNS | Set APT pin File
+  template:
+    src: pdns.pin.j2
+    dest: /etc/apt/preferences.d/pdns
+    owner: root
+    group: root
+    mode: 0644

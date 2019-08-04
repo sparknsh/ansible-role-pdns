@@ -1,8 +1,8 @@
 # Ansible Role: PowerDNS
 
-#### Version: 1.0.0
+#### Version: 1.2.0
 
-[![pipeline status](https://gitlab.com/sparknsh/ansible-role-pdns/badges/master/pipeline.svg)](https://gitlab.com/sparknsh/ansible-role-pdns/commits/master)
+[![](https://img.shields.io/badge/role-sparknsh.pdns-blue.svg)](https://galaxy.ansible.com/sparknsh/pdns)
 
 Development of this project is managed in a private repository then pushed out to [GitLab](https://gitlab.com/sparknsh/ansible-role-pdns) and [GitHub](https://github.com/sparknsh/ansible-role-pdns) when we have a new version for you. If you have any issues please contact [sparknsh](https://www.sparknsh.com/contact?type=issue&name=ansible-role-pdns)
 
@@ -11,47 +11,48 @@ Development of this project is managed in a private repository then pushed out t
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
 ```yaml
-pdns_install_repo: "{{ pdns_auth_powerdns_repo_41 }}"
+pdns__install_repo: "{{ pdns__auth_powerdns_repo_42 }}"
 ```
 
 Pick what version of PowerDNS you want to install.
 
-- pdns_auth_powerdns_repo_master
-- pdns_auth_powerdns_repo_41
-- pdns_auth_powerdns_repo_40
+- pdns__auth_powerdns_repo_master
+- pdns__auth_powerdns_repo_42
+- pdns__auth_powerdns_repo_41
+- pdns__auth_powerdns_repo_40
 
 ```yaml
-pdns_repo_https: True
+pdns__repo_https: True
 ```
 If you want to load the repo over https or not.
 
 ```yaml
-pdns_config: []
+pdns__config: []
 
-pdns_backends: []
+pdns__backends: []
 ```
 
 #### Example
 
 ```yaml
-pdns_install_repo: "{{ pdns_auth_powerdns_repo_41 }}"
-pdns_repo_https: False
-pdns_config:
+pdns__install_repo: "{{ pdns__auth_powerdns_repo_42 }}"
+pdns__repo_https: false
+pdns__config:
   local-address: 0.0.0.0
   local-port: 53
-  daemon: True
-  master: False
-  slave: False
-  disable-axfr: True
+  daemon: true
+  master: false
+  slave: false
+  disable-axfr: true
 
-pdns_backends:
+pdns__backends:
   gmysql:
     host: 127.0.0.1
     port: 3306
     user: powerdns
     password: powerdns
     dbname: powerdns
-    dnssec: False
+    dnssec: false
 ```
 
 ## Example Playbook

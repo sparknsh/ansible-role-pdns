@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-{% for config_item, value in pdns_config.items() | sort() %}
+{% for config_item, value in pdns__config.items() | sort() %}
 {% if config_item not in ["config-dir", "launch", "setuid", "setgid"] %}
 {% if value == True %}
 {{ config_item }}=yes
@@ -12,10 +12,10 @@
 {% endif %}
 {% endfor %}
 
-{% for backend in pdns_backends | sort() -%}
+{% for backend in pdns__backends | sort() -%}
 launch+={{ backend }}
 {% set backend_string = backend | replace(':', '-') %}
-{% for backend_item, value in pdns_backends[backend].items() | sort() -%}
+{% for backend_item, value in pdns__backends[backend].items() | sort() -%}
 {% if value == True %}
 {{ backend_string }}-{{ backend_item }}=yes
 {% elif value == False %}

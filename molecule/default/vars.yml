@@ -1,0 +1,11 @@
+---
+
+pdns__install_repo: "{{ pdns__auth_powerdns_repo_master }}"
+pdns__repo_https: false
+pdns__config:
+  local-address: 127.0.0.1
+  local-port: 10053
+
+pdns__backends:
+  bind:
+    config: '/dev/null'

@@ -1,0 +1,22 @@
+---
+
+- name: PDNS | Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: PDNS | Add YUM Repo
+  yum_repository:
+    name: "{{ pdns__install_repo['name'] }}"
+    file: "{{ pdns__install_repo['name'] }}"
+    description: PowerDNS Authoritative Server
+    baseurl: "{{ pdns__install_repo['yum_repo_baseurl'] }}"
+    gpgkey: "{{ pdns__install_repo['gpg_key'] }}"
+    gpgcheck: true
+    priority: "90"
+    state: present
+  notify: YUM Clean Metadata
+  register: __pdns__yum_repo
+
+- name: PDNS | Run Handlers
+  meta: flush_handlers

@@ -1,13 +1,13 @@
 ---
 
-pdns_install_repo: "{{ pdns_auth_powerdns_repo_41 }}"
+pdns__install_repo: "{{ pdns__auth_powerdns_repo_42 }}"
 
-pdns_repo_https: True
+pdns__repo_https: true
 
-pdns_config:
+pdns__config:
   local-address: 0.0.0.0
   local-port: 53
 
-pdns_backends:
+pdns__backends:
   bind:
     config: '/dev/null'

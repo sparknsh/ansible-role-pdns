@@ -1,10 +1,18 @@
 ---
 
+- name: YUM Clean Metadata
+  command: yum clean metadata
+  args:
+    warn: false
+  when: __pdns__yum_repo.changed
+
+- name: APT Update Cache
+  apt:
+    update_cache: true
+    cache_valid_time: 0
+  when: "__pdns__apt_key.changed or __pdns__apt_repo.changed"
+
 - name: Restart PowerDNS
   service:
-    name: "{{ pdns_service_name }}"
+    name: "{{ pdns__service_name }}"
     state: restarted
-
-- name: reload systemd and restart PowerDNS
-  command: systemctl daemon-reload
-  notify: Restart PowerDNS

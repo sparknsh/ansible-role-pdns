@@ -1,36 +1,72 @@
 ---
 
-pdns_auth_powerdns_repo_master:
+__pdns__repo_url: "{{ 'http://' if not pdns__repo_https else 'https://' }}repo.powerdns.com"
+
+pdns__auth_powerdns_repo_master:
   apt_repo_origin: "repo.powerdns.com"
-  apt_repo: "deb [arch=amd64] {{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-master main"
-  gpg_key: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/CBC8B383-pub.asc"
+  apt_repo: "deb {{ __pdns__repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-master main"
+  gpg_key: "{{ __pdns__repo_url }}/CBC8B383-pub.asc"
   gpg_key_id: "D47975F8DAE32700A563E64FFF389421CBC8B383"
-  yum_repo_baseurl: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/centos/$basearch/$releasever/auth-master"
-  yum_debug_symbols_repo_baseurl: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/centos/$basearch/$releasever/auth-master/debug"
+  yum_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-master"
+  yum_debug_symbols_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-master/debug"
   name: "powerdns-auth-master"
 
-pdns_auth_powerdns_repo_40:
+pdns__auth_powerdns_repo_40:
   apt_repo_origin: "repo.powerdns.com"
-  apt_repo: "deb [arch=amd64] {{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-40 main"
-  gpg_key: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/FD380FBB-pub.asc"
+  apt_repo: "deb {{ __pdns__repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-40 main"
+  gpg_key: "{{ __pdns__repo_url }}/FD380FBB-pub.asc"
   gpg_key_id: "9FAAA5577E8FCF62093D036C1B0C6205FD380FBB"
-  yum_repo_baseurl: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/centos/$basearch/$releasever/auth-40"
-  yum_debug_symbols_repo_baseurl: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/centos/$basearch/$releasever/auth-40/debug"
+  yum_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-40"
+  yum_debug_symbols_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-40/debug"
   name: "powerdns-auth-40"
 
-pdns_auth_powerdns_repo_41:
+pdns__auth_powerdns_repo_41:
   apt_repo_origin: "repo.powerdns.com"
-  apt_repo: "deb [arch=amd64] {{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-41 main"
-  gpg_key: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/FD380FBB-pub.asc"
+  apt_repo: "deb {{ __pdns__repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-41 main"
+  gpg_key: "{{ __pdns__repo_url }}/FD380FBB-pub.asc"
   gpg_key_id: "9FAAA5577E8FCF62093D036C1B0C6205FD380FBB"
-  yum_repo_baseurl: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/centos/$basearch/$releasever/auth-41"
-  yum_debug_symbols_repo_baseurl: "{{ 'http://' if not pdns_repo_https else 'https://' }}repo.powerdns.com/centos/$basearch/$releasever/auth-41/debug"
+  yum_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-41"
+  yum_debug_symbols_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-41/debug"
   name: "powerdns-auth-41"
 
-pdns_service_name: "pdns"
+pdns__auth_powerdns_repo_42:
+  apt_repo_origin: "repo.powerdns.com"
+  apt_repo: "deb {{ __pdns__repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release | lower }}-auth-42 main"
+  gpg_key: "{{ __pdns__repo_url }}/FD380FBB-pub.asc"
+  gpg_key_id: "9FAAA5577E8FCF62093D036C1B0C6205FD380FBB"
+  yum_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-42"
+  yum_debug_symbols_repo_baseurl: "{{ __pdns__repo_url }}/centos/$basearch/$releasever/auth-42/debug"
+  name: "powerdns-auth-42"
 
-pdns_config_file: "pdns.local.conf"
+pdns__service_name: "pdns"
 
-pdns_user: pdns
-pdns_group: pdns
+pdns__config_file: "pdns.conf"
 
+pdns__user: pdns
+pdns__group: pdns
+
+__pdns__package_name:
+  Debian: "pdns-server"
+  RedHat: "pdns"
+
+pdns__package_name: "{{ __pdns__package_name[ansible_os_family] }}"
+
+pdns__backends_packages:
+  geo: pdns-backend-geo
+  geoip: pdns-backend-geoip
+  gmysql: pdns-backend-mysql
+  gpgsql: "{{ 'pdns-backend-pgsql' if ansible_os_family == 'Debian' else 'pdns-backend-postgresql' }}"
+  gsqlite3: "{{ 'pdns-backend-sqlite3' if ansible_os_family == 'Debian' else 'pdns-backend-sqlite' }}"
+  ldap: pdns-backend-ldap
+  lmdb: pdns-backend-lmdb
+  lua: pdns-backend-lua
+  mydns: pdns-backend-mydns
+  pipe: pdns-backend-pipe
+  remote: pdns-backend-remote
+  tinydns: pdns-backend-tinydns
+
+__pdns__config_dir:
+  Debian: "/etc/powerdns"
+  RedHat: "/etc/pdns"
+
+pdns__config_dir: "{{ __pdns__config_dir[ansible_os_family] }}"

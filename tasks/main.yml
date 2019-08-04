@@ -1,24 +1,60 @@
 ---
 
-- name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
+- name: PDNS | {{ ansible_os_family }} Fmaily Install
+  include_tasks: "__{{ ansible_os_family }}.yml"
 
-# OS tasks.
-- name: Debain Fmaily
-  include_tasks: setup-Debian.yml
-  when: ansible_os_family == 'Debian'
+- name: PDNS | Install PowerDNS
+  package:
+    name: "{{ pdns__package_name }}"
+    state: present
 
-- name: RedHat Fmaily
-  include_tasks: setup-RedHat.yml
-  when: ansible_os_family == 'RedHat'
+- name: PDNS | Install PowerDNS Backend
+  package:
+    name: "{{ pdns__backends_packages[item.key.split(':')[0]] }}"
+    state: present
+  with_dict: "{{ pdns__backends }}"
+  when:
+    - pdns__backends_packages[item.key.split(':')[0]] is defined
+  loop_control:
+    label: "{{ pdns__backends | first }}"
 
-#- include: database.yml
+- name: PDNS | Remove Default Files
+  file:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ pdns__config_dir }}/named.conf"
+    - "{{ pdns__config_dir }}/pdns.d/bind.conf"
+    - "{{ pdns__config_dir }}/pdns.d/pdns.simplebind.conf"
 
-- name: PowerDNS Configure
-  include_tasks: configure.yml
+- name: PDNS | Ensure Config Directory Exists
+  file:
+    name: "{{ pdns__config_dir }}/pdns.d"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: 0750
 
-- name: Start and enable the PowerDNS Authoritative Server service
+- name: PDNS | Set Default PDNS config file
+  template:
+    src: default-pdns.conf.j2
+    dest: "{{ pdns__config_dir }}/pdns.conf"
+    owner: "root"
+    group: "root"
+    mode: 0640
+  notify: Restart PowerDNS
+
+- name: PDNS | Generate PowerDNS Backend Config
+  template:
+    src: pdns.conf.j2
+    dest: "{{ pdns__config_dir }}/pdns.d/{{ pdns__config_file }}"
+    owner: "root"
+    group: "root"
+    mode: 0640
+  notify: Restart PowerDNS
+
+- name: PDNS | Start & Enable PowerDNS
   service:
-    name: "{{ pdns_service_name }}"
+    name: "{{ pdns__service_name }}"
     state: started
     enabled: true
